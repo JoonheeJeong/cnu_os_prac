@@ -1,0 +1,31 @@
+#!/bin/bash
+
+PATH_TEST=$PATH:$PATH:$PATH
+echo "PATH_TEST=$PATH_TEST"
+
+echo "# --- a simple and powerful version --- #"
+result=$(echo $PATH_TEST | tr ':' '\n' | sort -u | tr '\n' ':')
+result=$(echo $result | cut -c -$((${#result}-1)))
+echo "result=$result"
+
+echo "========================================="
+
+echo "# --- a complex and slow version ------ #"
+TEMP=temp.txt
+> $TEMP
+i=1
+while true; do
+	path="$(echo $PATH_TEST | cut -d \: -f $i)"
+	if [[ -z $path ]]; then
+		break
+	fi
+	echo $path >> $TEMP
+	((i++))
+done
+
+result=
+for path in $(sort -u $TEMP); do
+	result="$result:$path"
+done
+result=$(echo $result | cut -c 2-)
+echo "result=$result"
