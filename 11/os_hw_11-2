@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for origin in $(ls [a-z].txt); do
+	cp $origin ${origin}.bak
+done
