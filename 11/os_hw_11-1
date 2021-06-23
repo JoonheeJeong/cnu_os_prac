@@ -4,8 +4,13 @@ PATH_TEST=$PATH:$PATH:$PATH
 echo "PATH_TEST=$PATH_TEST"
 
 echo "# --- a simple and powerful version --- #"
-result=$(echo $PATH_TEST | tr ':' '\n' | sort -u | tr '\n' ':')
-result=$(echo $result | cut -c -$((${#result}-1)))
+#result=$(echo $PATH_TEST | tr ':' '\n' | sort -u | tr '\n' ':')
+## result=$(echo $result | cut -c -$((${#result}-1)))
+#result=$(echo ${result%:}) #result=$(echo ${result:0:-1})
+
+result=$(echo $PATH_TEST | tr ':' '\n' | sort -u)
+result=$(echo $result | tr ' ' ':')
+
 echo "result=$result"
 
 echo "========================================="
