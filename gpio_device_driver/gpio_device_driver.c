@@ -5,6 +5,15 @@
 #include <linux/uaccess.h> // copy_to/from_user
 #include "gpio_device_driver.h"
 
+#define LED_R	17
+#define LED_G	0
+#define LED_W	0
+#define LED_Y	0
+#define BTN_R	13
+#define BTN_G	0   // BLUE
+#define BTN_W	0
+#define BTN_Y	0
+
 static int __init gpio_init(void);
 static void __exit gpio_exit(void);
 
@@ -25,15 +34,15 @@ static struct file_operations gpio_fops = {
 
 static int gpio_open(struct inode *inode, struct file *filp)
 {
-    if (gpio_request(LED_R, "led_red") > 0) {
+    if (gpio_request(LED_R, "led_red") != 0) {
 	printk(KERN_ERR "ERROR: gpio_request\n");
 	return -1;
     } else {
 	printk(KERN_INFO "LED_R OPEN COMPLETE\n");
-	gpio_direction_output(LED_R, 1);
+	gpio_direction_output(LED_R, 0);
     }
 
-    if (gpio_request(BTN_R, "btn_red") > 0) {
+    if (gpio_request(BTN_R, "btn_red") != 0) {
 	printk(KERN_ERR "ERROR: gpio_request\n");
 	return -1;
     } else {
@@ -54,36 +63,40 @@ static ssize_t gpio_read(struct file *filp,
 		char *buf, size_t len, loff_t *off)
 {
     char input = gpio_get_value(BTN_R);
-    if (input == 1)
-	printk(KERN_INFO "BTN_R PUSH\n");
-    else if (input == 0)
-	printk(KERN_INFO "BTN_R PULL\n");
-    else
+
+    if (input != 0 && input != 1) {
 	printk(KERN_ERR "ERROR: unknown user input");
+	return -1;
+    }
 
-    if (copy_to_user(buf, &input, len) > 0)
-	printk(KERN_ERR "ERROR: copy_to_user\n");
-    else
-	printk(KERN_INFO "READ GPIO\n");
+    if (copy_to_user(buf, &input, len) != 0) {
+	printk(KERN_ERR "ERROR: copy_to_user\n"); return -1;
+    }
 
-    return 0;
+    //printk(KERN_INFO "READ GPIO\n");
+    return len;
 }
 
 static ssize_t gpio_write(struct file *filp,
 		const char *buf, size_t len, loff_t *off)
 {
     char temp;
-    if (copy_from_user(&temp, buf, len) > 0)
+
+    if (copy_from_user(&temp, buf, len) > 0) {
 	printk(KERN_ERR "ERROR: copy_from_user\n");
-    else
-	printk(KERN_INFO "WRITE GPIO\n");
+	return -1;
+    }
+    
+    //printk(KERN_INFO "WRITE GPIO\n");
+    if (temp != 1 && temp != 0) {
+	printk(KERN_ERR "ERROR: unknown user input");
+	return -1;
+    }
 
     if (temp == 1)
 	gpio_set_value(LED_R, 1);
-    else if (temp == 0)
-	gpio_set_value(LED_R, 0);
     else
-	printk(KERN_ERR "ERROR: unknown user input");
+	gpio_set_value(LED_R, 0);
     return len;
 }
 
