@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <wiringPi.h>
+#include <unistd.h>
 
 #define LED_R	0
 #define BTN_R	23
@@ -20,6 +21,7 @@ void blink_led()
 	}
 	pre_read_data = read_data;
 	digitalWrite(LED_R, read_data);
+	usleep(100000); // delay by 0.1s to prevent duplicate inputs
     }
 }
 

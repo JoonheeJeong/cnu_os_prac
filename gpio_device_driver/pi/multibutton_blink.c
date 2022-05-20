@@ -53,6 +53,7 @@ void blink_led(int fd)
 	pre_input_w = input_w;
 	pre_input_y = input_y;
 	write(fd, &read_data, 1);
+	usleep(100000); // delay by 0.1s to prevent duplicate inputs
     }
 }
 

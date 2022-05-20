@@ -22,6 +22,7 @@ void blink_led(int fd)
 	}
 	pre_read_data = read_data;
 	write(fd, &read_data, 1);
+	usleep(100000); // delay by 0.1s to prevent duplicate inputs
     }
 }
 
