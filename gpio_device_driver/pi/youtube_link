@@ -1,0 +1,7 @@
+===순발력 게임 안내===
+
+소스: agility_game.c
+
+유튜브 링크: https://youtu.be/7mv1hGXNgL4
+
+사용할 gpio 디바이스 드라이버는 상위 디렉토리의 gpio_device_driver_multi.c를 참고하세요!
